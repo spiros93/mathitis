@@ -6,7 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ MongooseModule.forRoot('mongodb+srv://panosterzakis11:v3tUgxmsOeByGqg8@cluster0.errjn4n.mongodb.net/AngularBackend?retryWrites=true&w=majority'), UserModule],
+  imports: [ ConfigModule.forRoot(), MongooseModule.forRoot(process.env.MONGODB_URI), UserModule],
   controllers: [AppController],
   providers: [AppService],
 })
