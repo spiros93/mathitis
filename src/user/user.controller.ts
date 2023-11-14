@@ -1,6 +1,7 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './user.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('users')
 export class UserController {
@@ -14,6 +15,7 @@ export class UserController {
   }
 
   @Get(':username')
+  @UseGuards(AuthGuard)
   async findUserByUsername(@Param('username') username: string){
     return await this.userService.findUserByUsername(username);
   }

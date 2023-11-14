@@ -10,6 +10,6 @@ export class AuthController {
   async login(
     @Body(new ValidationPipe()) credentials: AuthDto,
   ): Promise<{access_token: string}>{
-    return this.authService.login(credentials);
+    return this.AuthService.login(credentials);
   }
 }
