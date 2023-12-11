@@ -4,12 +4,14 @@ import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-  [x: string]: any;
+  // [x: string]: any;
+  
+  constructor(private authService: AuthService) {}
 
   @Post('login')
   async login(
     @Body(new ValidationPipe()) credentials: AuthDto,
   ): Promise<{access_token: string}>{
-    return this.AuthService.login(credentials);
+    return this.authService.login(credentials);
   }
 }

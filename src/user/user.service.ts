@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './user.schema';
+import { User} from './user.schema';
 import { Model } from 'mongoose';
-import { UserDto } from './user.dto';
+import { UserDto, UpdateUserDto} from './user.dto';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
@@ -11,22 +11,26 @@ export class UserService {
 
     // find methods
 
-    async findAllUsers(): Promise<User[]>{
-      return await this.userModel.find().exec();
+    async findAllUsers(query: any): Promise<User[]>{
+      return await this.userModel.find(query).exec();
     }
 
     async findUserByUsername(username: string): Promise<User> {
-      return await this.userModel.findOne({username}).exec();
+      return await this.userModel.findOne({username});
     }
 
     async findUserByEmail(email: string): Promise<User>{
       return await this.userModel.findOne({email}).exec();
     }
 
+    
+    async findUserById(userId: string): Promise<User[]>{
+      return await this.userModel.find({userId}).exec();
+    }
+
     // create methods
 
     async createUser(user: UserDto): Promise<User> {
-      console.log(user);
       const { password } = user;
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = new this.userModel({...user, password: hashedPassword });
@@ -37,4 +41,12 @@ export class UserService {
       const newUsers = users.map((user) => new this.userModel(user));
       return await this.userModel.insertMany(newUsers);
     }
+
+    async updateUser(userId: string, updatePosrDto: UpdateUserDto): Promise<User> {
+      return await this.userModel.findByIdAndUpdate(userId, updatePosrDto, { new: true });
+    }
+
+    async deleteUser(userId: string): Promise<User> {
+    return await this.userModel.findByIdAndDelete(userId);
+  }
   }

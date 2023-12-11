@@ -1,6 +1,6 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, ValidationPipe, Delete,  Put, Req, Query } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserDto } from './user.dto';
+import { UserDto, UserQueryDto } from './user.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('users')
@@ -10,14 +10,29 @@ export class UserController {
   // GET endpoints
 
   @Get()
-  async findAllUsers(){
-    return await this.userService.findAllUsers();
+  async findAllUsers(@Req() req: any, @Query() query: UserQueryDto){
+    const user = await this.userService.createUser(req.user.userIid);
+    if(user.isAdmin) {
+      return await this.userService.findAllUsers(query);
+    } else {
+      throw new HttpException('Unauthorized', HttpStatus.FORBIDDEN);
+    } 
+    
   }
 
   @Get(':username')
   @UseGuards(AuthGuard)
-  async findUserByUsername(@Param('username') username: string){
-    return await this.userService.findUserByUsername(username);
+  async findUserByUsername(@Param('username') username: string, @Req() req: any){
+    const logInUser = await this.userService.createUser(req.user.userIid);
+    if(!logInUser.isAdmin) {
+      throw new HttpException('Unauthorized', HttpStatus.FORBIDDEN);
+    } 
+    const user = await this.userService.findUserByUsername(username);
+    if (user) {
+      return user;
+    } else {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
   }
 
   @Get('email/:email')
@@ -38,6 +53,41 @@ export class UserController {
         throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR)
       }
     }
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  async update(@Param('id') id: string, @Req() req: any, @Body() body: any) {
+    const user = await this.userService.createUser(req.user.userIid);
+    let userId ='';
+    if(id && user.isAdmin) {
+      userId = id;
+    } else if (!user.isAdmin) {
+      userId = req.user.userIid;
+    } 
+
+
+    const updatePost: any = await this.userService.updateUser(userId, body);
+    if (!updatePost) {
+      throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
+    }
+    return updatePost;
+  }
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  async remove(@Param('id') id: string, @Req() req: any) {
+    const user = await this.userService.createUser(req.user.userIid);
+    let userId ='';
+    if(id && user.isAdmin) {
+      userId = id;
+    } else if (!user.isAdmin) {
+      userId = req.user.userIid;
+    } 
+    const deletePost = await this.userService.deleteUser(id);
+    if (!deletePost) {
+      throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
+    }
+    throw new HttpException('Post deleted successfully', HttpStatus.OK);
   }
 
   @Post('bulk')

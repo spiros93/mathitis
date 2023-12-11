@@ -33,6 +33,7 @@ export class AuthService {
       username: user.username,
       email: user.email,
       fullname: `${user.givenName} ${user.surName}`,
+      userId: user['_id']
     };
     const access_token = this.jwtService.sign(payload);
 
