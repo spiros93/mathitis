@@ -21,11 +21,20 @@ export class PostController {
     return await this.postService.findPostBypostTitle(postTitle);
   }
 
+  @Get('title/userId')
+  @UseGuards(AuthGuard) 
+  async findPostByPostTitlerUserId(@Query('postTitle') postTitle: string, @Req() req: any){
+    console.log(req.user.userId);
+    console.log(postTitle);
+    return await this.postService.findPostByPostTitleUserId(postTitle, req.user.userId);
+  }
+
   @Get('userId/:userId')
   @UseGuards(AuthGuard)
-  async findPostsByUserID(@Req() req: any){
-    const posts = await this.postService.findPostByUserId(req.user.id);
+  async findPostsByUserID(@Req() req: any, @Param('userId') id: string){
+    const posts = await this.postService.findPostByUserId(id);
     if (posts) {
+      console.log(posts)
       return posts;
     } else {
       throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
@@ -33,14 +42,21 @@ export class PostController {
   }
 
   // POST endpoints
-
+  
   @Post()
   @UseGuards(AuthGuard)
-  async createPost(@Body(new ValidationPipe()) post: PostDto){
+  async createPost(@Body(new ValidationPipe()) post: PostDto, @Req() req: any){
+
     try{
+      const postExists = await this.postService.findAllPosts({postTitle: post.postTitle, userId: req.user.userId });
+      console.log(postExists)
+      if (postExists.length){
+        throw new Error("dublicate");
+      }
+      post.userId = req.user.userId;
       return await this.postService.createPost(post);
     } catch (error){
-      if (error.code == 11000){
+      if (error.message === 'dublicate'){
         throw new HttpException('postTitle exists', HttpStatus.CONFLICT);
       }else{
         throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR)

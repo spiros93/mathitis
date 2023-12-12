@@ -24,8 +24,8 @@ export class UserService {
     }
 
     
-    async findUserById(userId: string): Promise<User[]>{
-      return await this.userModel.find({userId}).exec();
+    async findUserById(userId: string): Promise<User>{
+      return await this.userModel.findOne({_id : userId}).exec();
     }
 
     // create methods

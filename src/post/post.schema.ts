@@ -5,7 +5,7 @@ import { HydratedDocument } from 'mongoose';
 export class Post{
   @Prop({type: String, required:true}) userId: string;
   @Prop({type: String, required:true}) postTitle: string;
-  @Prop({type: String, required:true}) text: string;
+  @Prop({type: String, required:true}) postText: string;
   @Prop({type: String, default:''}) photoURL: string;
 }
 

@@ -11,7 +11,7 @@ export class User{
   @Prop({type: String, required:true, unique:true}) email: string;
   @Prop({type: String, required:true}) address: string;
   @Prop({type: String, default:''}) photoURL: string;
-  @Prop({type: String, default: false}) isAdmin: boolean;
+  @Prop({type: Boolean, default: false}) isAdmin: boolean;
 }
 
 export type UserDocument = HydratedDocument<User>;

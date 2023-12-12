@@ -1,9 +1,9 @@
-import { IsNotEmpty, IsEmail, IsString, IsNumber, IsUrl, MinLength } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsString, IsNumber, IsUrl, MinLength, IsOptional } from 'class-validator';
 
 export class PostDto {
-  //@IsNotEmpty() @IsString() userId: string;
+  @IsString() @IsOptional() userId?: string;
   @IsNotEmpty() @IsString() postTitle: string;
-  @IsNotEmpty() @IsString() text: string;
+  @IsNotEmpty() @IsString() postText: string;
   @IsUrl() photoURL?: string;
 }
 

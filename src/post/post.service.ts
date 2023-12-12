@@ -11,11 +11,16 @@ export class PostService {
     // find methods
 
     async findAllPosts(query : any): Promise<Post[]>{
+      console.log(query)
       return await this.postModel.find(query).exec();
     }
 
     async findPostBypostTitle(postTitle: string): Promise<Post> {
       return await this.postModel.findOne({postTitle}).exec();
+    }
+
+    async findPostByPostTitleUserId(postTitle: string, userId : string): Promise<Post> {
+      return await this.postModel.findOne({postTitle, userId}).exec();
     }
 
     async findPostByUserId(userId: string): Promise<Post[]>{
