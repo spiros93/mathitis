@@ -4,7 +4,7 @@ export class PostDto {
   @IsString() @IsOptional() userId?: string;
   @IsNotEmpty() @IsString() postTitle: string;
   @IsNotEmpty() @IsString() postText: string;
-  @IsUrl() photoURL?: string;
+  @IsOptional() @IsUrl()  photoURL?: string;
 }
 
 export class UpdatePostDto {

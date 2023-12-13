@@ -39,8 +39,8 @@ export class PostService {
       return await this.postModel.insertMany(newPosts);
     }
 
-    async updatePost(postId: string, updatePosrDto: UpdatePostDto): Promise<Post> {
-      return await this.postModel.findByIdAndUpdate(postId, updatePosrDto, { new: true });
+    async updatePost(id: string, updatePosrDto: UpdatePostDto): Promise<Post> {
+      return await this.postModel.findByIdAndUpdate(id, updatePosrDto, { new: true });
     }
 
     async deletePost(postId: string): Promise<Post> {

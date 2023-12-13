@@ -23,10 +23,15 @@ export class PostController {
 
   @Get('title/userId')
   @UseGuards(AuthGuard) 
-  async findPostByPostTitlerUserId(@Query('postTitle') postTitle: string, @Req() req: any){
-    console.log(req.user.userId);
-    console.log(postTitle);
-    return await this.postService.findPostByPostTitleUserId(postTitle, req.user.userId);
+  async findPostByPostTitlerUserId(@Query() query, @Req() req: any){
+    let userId ='';
+    if(req.user.isAdmin) {
+      console.log("userId");
+      userId = query.userId;
+    } else {
+      userId = req.user.userId;
+    } 
+    return await this.postService.findPostByPostTitleUserId(query.postTitle, userId);
   }
 
   @Get('userId/:userId')
@@ -70,8 +75,9 @@ export class PostController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   async update(@Param('id') id: string, @Body() body: any) {
+    console.log(id)
     const updatePost: any = await this.postService.updatePost(id, body);
     if (!updatePost) {
       throw new HttpException('Post not found', HttpStatus.NOT_FOUND);

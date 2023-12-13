@@ -11,7 +11,7 @@ export class UserController {
 
   @Get()
   async findAllUsers(@Req() req: any, @Query() query: UserQueryDto){
-    const user = await this.userService.createUser(req.user.userIid);
+    const user = await this.userService.createUser(req.user.userId);
     if(user.isAdmin) {
       return await this.userService.findAllUsers(query);
     } else {
@@ -23,22 +23,16 @@ export class UserController {
   @Get(':username')
   @UseGuards(AuthGuard)
   async findUserByUsername(@Param('username') username: string, @Req() req: any){
-    //let userId = req.user.userId|| '';
-    //let userNameToSearch = username;
-    const logInUser = await this.userService.findUserById(req.user.userId);
 
-    //userNameToSearch = logInUser.username;
-    if(logInUser && !logInUser.isAdmin) {
-      username = logInUser.username;
+    if(!req.user.isAdmin) {
+      username =req.user.username;
     } 
-    if (logInUser) {
-      const user = await this.userService.findUserByUsername(username);
-      
-      if (user) {
-        return user;
-      } else {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-      }
+    const user = await this.userService.findUserByUsername(username);
+    
+    if (user) {
+      return user;
+    } else {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
    
   }
@@ -66,12 +60,12 @@ export class UserController {
   @Put(':id')
   @UseGuards(AuthGuard)
   async update(@Param('id') id: string, @Req() req: any, @Body() body: any) {
-    const user = await this.userService.findUserById(req.user.userIid);
+    console.log(req.user.isAdmin)
     let userId ='';
-    if(id && user.isAdmin) {
+    if(id && req.user.isAdmin) {
       userId = id;
-    } else if (!user.isAdmin) {
-      userId = req.user.userIid;
+    } else if (!req.user.isAdmin) {
+      userId = req.user.userId;
     } 
 
 
@@ -84,12 +78,12 @@ export class UserController {
   @Delete(':id')
   @UseGuards(AuthGuard)
   async remove(@Param('id') id: string, @Req() req: any) {
-    const user = await this.userService.findUserById(req.user.userIid);
+  
     let userId ='';
-    if(id && user.isAdmin) {
+    if(id && req.user.isAdmin) {
       userId = id;
-    } else if (!user.isAdmin) {
-      userId = req.user.userIid;
+    } else if (!req.user.isAdmin) {
+      userId = req.user.userId;
     } 
     const deletePost = await this.userService.deleteUser(id);
     if (!deletePost) {
