@@ -62,7 +62,7 @@ export class PostController {
       return await this.postService.createPost(post);
     } catch (error){
       if (error.message === 'dublicate'){
-        throw new HttpException('postTitle exists', HttpStatus.CONFLICT);
+        throw new HttpException('The post title exists!', HttpStatus.CONFLICT);
       }else{
         throw new HttpException('Unexpected error', HttpStatus.INTERNAL_SERVER_ERROR)
       }
