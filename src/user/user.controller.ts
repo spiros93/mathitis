@@ -10,24 +10,24 @@ export class UserController {
   // GET endpoints
 
   @Get()
+  @UseGuards(AuthGuard)
   async findAllUsers(@Req() req: any, @Query() query: UserQueryDto){
-    const user = await this.userService.createUser(req.user.userId);
-    if(user.isAdmin) {
+    if(req.user.isAdmin ) {
       return await this.userService.findAllUsers(query);
-    } else {
-      throw new HttpException('Unauthorized', HttpStatus.FORBIDDEN);
-    } 
+   } else {
+     throw new HttpException('Unauthorized', HttpStatus.FORBIDDEN);
+} 
     
   }
 
-  @Get(':username')
+  @Get(':id')
   @UseGuards(AuthGuard)
-  async findUserByUsername(@Param('username') username: string, @Req() req: any){
+  async findUserById(@Param('id') id: string, @Req() req: any){
 
     if(!req.user.isAdmin) {
-      username =req.user.username;
+      id =req.user.userId;
     } 
-    const user = await this.userService.findUserByUsername(username);
+    const user = await this.userService.findUserById(id);
     
     if (user) {
       return user;
@@ -37,9 +37,15 @@ export class UserController {
    
   }
 
-  @Get('email/:email')
-  async findUserByEmail(@Param('email') email: string){
-    return await this.userService.findUserByEmail(email);
+  @Get('username/:username')
+  @UseGuards(AuthGuard)
+  async findUserByEmail(@Param('username') username: string, @Req() req: any){
+    console.log(req.user.username)
+    console.log(username)
+    if(!req.user.isAdmin && username !== req.user.username) {
+      throw new HttpException('Unauthorized', HttpStatus.FORBIDDEN);
+    } 
+    return await this.userService.findUserByUsername(username);
   }
 
   // POST endpoints

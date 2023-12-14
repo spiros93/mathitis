@@ -4,6 +4,7 @@ import { HydratedDocument } from 'mongoose';
 @Schema({ timestamps: true})
 export class Post{
   @Prop({type: String, required:true}) userId: string;
+  @Prop({type: String, required:true}) username: string;
   @Prop({type: String, required:true}) postTitle: string;
   @Prop({type: String, required:true}) postText: string;
   @Prop({type: String, default:null}) photoURL: string;
