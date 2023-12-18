@@ -34,7 +34,8 @@ export class AuthService {
       email: user.email,
       fullname: `${user.givenName} ${user.surName}`,
       userId: user['_id'],
-      isAdmin: user.isAdmin
+      isAdmin: user.isAdmin,
+      photoUrl: user.photoURL
     };
     const access_token = this.jwtService.sign(payload);
 
