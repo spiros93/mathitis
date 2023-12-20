@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, ValidationPipe, Delete,  Put, Req, Query } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserDto, UserQueryDto } from './user.dto';
+import { UserDto, UserQueryDto, UpdateUserDto } from './user.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('users')
@@ -65,8 +65,7 @@ export class UserController {
 
   @Put(':id')
   @UseGuards(AuthGuard)
-  async update(@Param('id') id: string, @Req() req: any, @Body() body: any) {
-    console.log(req.user.isAdmin)
+  async update(@Body(new ValidationPipe()) body: UpdateUserDto, @Param('id') id: string, @Req() req: any) {
     let userId ='';
     if(id && req.user.isAdmin) {
       userId = id;
@@ -74,6 +73,7 @@ export class UserController {
       userId = req.user.userId;
     } 
 
+    body.photoURL = body.photoURL === undefined ? '' : body.photoURL;
 
     const updatePost: any = await this.userService.updateUser(userId, body);
     if (!updatePost) {

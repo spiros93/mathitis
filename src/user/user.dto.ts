@@ -19,8 +19,8 @@ export class UpdateUserDto {
   @IsNotEmpty() @IsNumber() age: number;
   @IsNotEmpty() @IsEmail() email: string;
   @IsNotEmpty() address: string;
-  @IsUrl() photoURL?: string;
-}
+  @IsOptional() @IsUrl() photoURL?: string;
+} 
 
 export class UserQueryDto {
   @IsString() postTitle: string;
