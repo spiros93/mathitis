@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, ValidationPipe, Put, Delete, Req, Query } from '@nestjs/common';
 import { PostService } from './post.service';
-import { PostDto, PostQueryDto} from './post.dto';
+import { PostDto, PostQueryDto, UpdatePostDto} from './post.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 
@@ -76,8 +76,9 @@ export class PostController {
 
   @Put(':id')
   //@UseGuards(AuthGuard)
-  async update(@Param('id') id: string, @Body() body: any) {
+  async update(@Body(new ValidationPipe()) body: UpdatePostDto, @Param('id') id: string) {
     console.log(id)
+    body.photoURL = body.photoURL === undefined ? '' : body.photoURL;
     const updatePost: any = await this.postService.updatePost(id, body);
     if (!updatePost) {
       throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
