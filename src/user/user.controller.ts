@@ -83,15 +83,17 @@ export class UserController {
     return updatePost;
   }
 
-  @Put('password')
+  @Put('password/change')
   @UseGuards(AuthGuard)
   async updatePassword(@Body(new ValidationPipe()) body: UserPasswordDto, @Req() req: any) {
     let userId = req.user.userId;
-    const hashedPassword = await bcrypt.hash(body.password, 10);
     const newHashedPassword = await bcrypt.hash(body.newPassword, 10);
     const user = await this.userService.findUserById(userId);
-    if (user.password !== hashedPassword) {
-      throw new HttpException('Wrong Password', HttpStatus.UNAUTHORIZED);
+
+    if (!(await bcrypt.compare(body.currentPassword, user.password))) {
+      throw new HttpException('Wrong Current Password', HttpStatus.UNAUTHORIZED);
+    } else if (await bcrypt.compare(body.newPassword, user.password)) {
+      throw new HttpException('Current Password is the same with New Password', HttpStatus.CONFLICT);
     } else if (body.newPassword !== body.confirmPassword) {
       throw new HttpException('New Password & Confirm Password do not match', HttpStatus.NOT_ACCEPTABLE);
     } else {

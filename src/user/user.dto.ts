@@ -29,7 +29,7 @@ export class UserQueryDto {
 }
 
 export class UserPasswordDto {
-  @IsString() @MinLength(8) password: string;
-  @IsString() @MinLength(8) newPassword: string;
-  @IsString() @MinLength(8) confirmPassword: string;
+ @IsNotEmpty() @IsString() @MinLength(8) currentPassword: string;
+ @IsNotEmpty() @IsString() @MinLength(8) newPassword: string;
+ @IsNotEmpty() @IsString() @MinLength(8) confirmPassword: string;
 }

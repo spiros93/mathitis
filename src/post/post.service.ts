@@ -15,6 +15,14 @@ export class PostService {
       return await this.postModel.find(query).sort( { "createdAt": -1 }).exec();
     }
 
+    async findAllPostsRegex(postTitle : string): Promise<Post[]>{ 
+      return await this.postModel.find({postTitle :{ '$regex': postTitle, $options: 'i' }}).sort( { "createdAt": -1 }).exec();
+    }
+
+    async findAllPostsUserIdRegex(userId: string, postTitle : string): Promise<Post[]>{ 
+      return await this.postModel.find({userId: userId, postTitle :{ '$regex': postTitle, $options: 'i' }}).sort( { "createdAt": -1 }).exec();
+    }
+
     async findPostBypostTitle(postTitle: string): Promise<Post> {
       return await this.postModel.findOne({postTitle}).exec();
     }

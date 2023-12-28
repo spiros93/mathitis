@@ -18,3 +18,8 @@ export class PostQueryDto {
   @IsString() text: string;
   @IsUrl() photoURL?: string;
 }
+
+export class PostFindUsersPostsDto {
+  @IsString() postTitle: string;
+  @IsString() userId: string;
+}

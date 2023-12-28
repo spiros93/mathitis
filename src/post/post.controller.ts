@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, ValidationPipe, Put, Delete, Req, Query } from '@nestjs/common';
 import { PostService } from './post.service';
-import { PostDto, PostQueryDto, UpdatePostDto} from './post.dto';
+import { PostDto, PostQueryDto, UpdatePostDto, PostFindUsersPostsDto} from './post.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 
@@ -14,6 +14,17 @@ export class PostController {
   async findAllPosts(@Query() query: PostQueryDto){
     return await this.postService.findAllPosts(query);
   }
+
+  @Get('title/regex')
+  async findAllPostsRegex(@Query() query: PostQueryDto){
+    return await this.postService.findAllPostsRegex(query.postTitle);
+  }
+
+  @Get('title/userid/regex')
+  async findAllPostsUserIdRegex(@Query() query: PostFindUsersPostsDto){
+    return await this.postService.findAllPostsUserIdRegex(query.userId,query.postTitle);
+  }
+
 
   @Get(':postTitle')
   @UseGuards(AuthGuard)
