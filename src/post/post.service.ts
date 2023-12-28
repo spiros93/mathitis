@@ -12,7 +12,7 @@ export class PostService {
 
     async findAllPosts(query : any): Promise<Post[]>{
       console.log(query)
-      return await this.postModel.find(query).exec();
+      return await this.postModel.find(query).sort( { "createdAt": -1 }).exec();
     }
 
     async findPostBypostTitle(postTitle: string): Promise<Post> {
@@ -24,7 +24,7 @@ export class PostService {
     }
 
     async findPostByUserId(userId: string): Promise<Post[]>{
-      return await this.postModel.find({userId}).exec();
+      return await this.postModel.find({userId}).sort( { "createdAt": -1 }).exec();
     }
 
     // create methods

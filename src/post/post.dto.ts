@@ -8,9 +8,9 @@ export class PostDto {
 }
 
 export class UpdatePostDto {
-  @IsString() postTitle: string;
-  @IsString() text: string;
-  @IsUrl() photoURL?: string;
+  @IsNotEmpty() @IsString() postTitle: string;
+  @IsNotEmpty() @IsString() postText: string;
+  @IsOptional() @IsUrl() photoURL?: string;
 }
 
 export class PostQueryDto {
