@@ -27,3 +27,9 @@ export class UserQueryDto {
   @IsString() text: string;
   @IsUrl() photoURL?: string;
 }
+
+export class UserPasswordDto {
+  @IsString() @MinLength(8) password: string;
+  @IsString() @MinLength(8) newPassword: string;
+  @IsString() @MinLength(8) confirmPassword: string;
+}

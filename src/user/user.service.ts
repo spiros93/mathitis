@@ -46,6 +46,10 @@ export class UserService {
       return await this.userModel.findByIdAndUpdate(userId, updatePosrDto, { new: true });
     }
 
+    async updateUserPassword(userId: string, password: string): Promise<User> {
+      return await this.userModel.findByIdAndUpdate(userId, {password : password});
+    }
+
     async deleteUser(userId: string): Promise<User> {
     return await this.userModel.findByIdAndDelete(userId);
   }

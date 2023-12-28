@@ -1,7 +1,8 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, UseGuards, ValidationPipe, Delete,  Put, Req, Query } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserDto, UserQueryDto, UpdateUserDto } from './user.dto';
+import { UserDto, UserQueryDto, UpdateUserDto, UserPasswordDto } from './user.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import * as bcrypt from 'bcryptjs';
 
 @Controller('users')
 export class UserController {
@@ -81,6 +82,27 @@ export class UserController {
     }
     return updatePost;
   }
+
+  @Put('password')
+  @UseGuards(AuthGuard)
+  async updatePassword(@Body(new ValidationPipe()) body: UserPasswordDto, @Req() req: any) {
+    let userId = req.user.userId;
+    const hashedPassword = await bcrypt.hash(body.password, 10);
+    const newHashedPassword = await bcrypt.hash(body.newPassword, 10);
+    const user = await this.userService.findUserById(userId);
+    if (user.password !== hashedPassword) {
+      throw new HttpException('Wrong Password', HttpStatus.UNAUTHORIZED);
+    } else if (body.newPassword !== body.confirmPassword) {
+      throw new HttpException('New Password & Confirm Password do not match', HttpStatus.NOT_ACCEPTABLE);
+    } else {
+      const updatePost: any = await this.userService.updateUserPassword(userId, newHashedPassword);
+      if (!updatePost) {
+        throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
+      }
+      return updatePost;
+    }
+  }
+
   @Delete(':id')
   @UseGuards(AuthGuard)
   async remove(@Param('id') id: string, @Req() req: any) {
