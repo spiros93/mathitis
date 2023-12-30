@@ -86,7 +86,7 @@ export class PostController {
   }
 
   @Put(':id')
-  //@UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   async update(@Body(new ValidationPipe()) body: UpdatePostDto, @Param('id') id: string) {
     console.log(id)
     body.photoURL = body.photoURL === undefined ? '' : body.photoURL;
